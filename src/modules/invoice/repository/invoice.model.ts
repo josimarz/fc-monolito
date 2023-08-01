@@ -5,50 +5,50 @@ import {
   PrimaryKey,
   Table,
 } from "sequelize-typescript";
-import { ProductModel } from "./product.model";
+import ProductModel from "./product.model";
 
 @Table({
   tableName: "invoices",
   timestamps: false,
 })
-export class InvoiceModel extends Model {
+export default class InvoiceModel extends Model {
   @PrimaryKey
   @Column({ allowNull: false })
-  readonly id: string;
+  declare id: string;
 
   @Column({ allowNull: false })
-  readonly name: string;
+  declare name: string;
 
   @Column({ allowNull: false })
-  readonly document: string;
+  declare document: string;
 
   @Column({ allowNull: false })
-  readonly street: string;
+  declare street: string;
 
   @Column({ allowNull: false })
-  readonly number: string;
+  declare number: string;
 
   @Column({ allowNull: false })
-  readonly complement: string;
+  declare complement: string;
 
   @Column({ allowNull: false })
-  readonly city: string;
+  declare city: string;
 
   @Column({ allowNull: false })
-  readonly state: string;
+  declare state: string;
 
   @Column({ allowNull: false })
-  readonly zipCode: string;
+  declare zipCode: string;
 
   @HasMany(() => ProductModel)
-  readonly items: ProductModel[];
+  declare items: ProductModel[];
 
   @Column({ allowNull: false })
-  readonly total: number;
+  declare total: number;
 
   @Column({ allowNull: false })
-  readonly createdAt: Date;
+  declare createdAt: Date;
 
   @Column({ allowNull: false })
-  readonly updatedAt: Date;
+  declare updatedAt: Date;
 }

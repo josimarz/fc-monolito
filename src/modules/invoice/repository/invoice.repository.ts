@@ -1,37 +1,49 @@
+import { Address } from "../../@shared/domain/value-object/address.value-object";
 import Id from "../../@shared/domain/value-object/id.value-object";
 import { Invoice } from "../domain/entity/invoice.entity";
 import { Product } from "../domain/entity/product.entity";
-import { Address } from "../domain/value-object/address.value-object";
 import { InvoiceGateway } from "../gateway/invoice.gateway";
-import { InvoiceModel } from "./invoice.model";
-import { ProductModel } from "./product.model";
+import InvoiceModel from "./invoice.model";
+import ProductModel from "./product.model";
 
 export class InvoiceRepository implements InvoiceGateway {
   async create(invoice: Invoice): Promise<void> {
-    await InvoiceModel.create(
-      {
-        id: invoice.id.id,
-        name: invoice.name,
-        document: invoice.document,
-        street: invoice.address.street,
-        number: invoice.address.number,
-        complement: invoice.address.complement,
-        city: invoice.address.city,
-        state: invoice.address.state,
-        zipCode: invoice.address.zipCode,
-        items: invoice.items.map((item) => ({
-          id: item.id.id,
-          name: item.name,
-          price: item.price,
-        })),
-        total: invoice.total,
-        createdAt: invoice.createdAt,
-        updatedAt: invoice.updatedAt,
-      },
-      {
-        include: [ProductModel],
-      }
-    );
+    const t = await InvoiceModel.sequelize.transaction();
+    try {
+      const model = await InvoiceModel.create(
+        {
+          id: invoice.id.id,
+          name: invoice.name,
+          document: invoice.document,
+          street: invoice.address.street,
+          number: invoice.address.number,
+          complement: invoice.address.complement,
+          city: invoice.address.city,
+          state: invoice.address.state,
+          zipCode: invoice.address.zipCode,
+          items: invoice.items.map((item) => ({
+            id: item.id.id,
+            name: item.name,
+            price: item.price,
+          })),
+          total: invoice.total,
+          createdAt: invoice.createdAt,
+          updatedAt: invoice.updatedAt,
+        },
+        {
+          transaction: t,
+        }
+      );
+      const id = invoice.items.map((item) => item.id.id);
+      await ProductModel.update(
+        { invoiceId: model.id },
+        { where: { id }, transaction: t }
+      );
+      await t.commit();
+    } catch (error) {
+      await t.rollback();
+      throw new Error("Unable to crate invoice");
+    }
   }
 
   async findById(id: string): Promise<Invoice> {

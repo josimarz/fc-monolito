@@ -6,27 +6,27 @@ import {
   PrimaryKey,
   Table,
 } from "sequelize-typescript";
-import { InvoiceModel } from "./invoice.model";
+import InvoiceModel from "./invoice.model";
 
 @Table({
   tableName: "products",
   timestamps: false,
 })
-export class ProductModel extends Model {
+export default class ProductModel extends Model {
   @PrimaryKey
   @Column({ allowNull: false })
-  readonly id: string;
+  declare id: string;
 
   @ForeignKey(() => InvoiceModel)
   @Column({ allowNull: false })
-  readonly invoiceId: string;
+  declare invoiceId: string;
 
   @BelongsTo(() => InvoiceModel)
-  readonly invoice: InvoiceModel;
+  declare invoice: InvoiceModel;
 
   @Column({ allowNull: false })
-  readonly name: string;
+  declare name: string;
 
   @Column({ allowNull: false })
-  readonly price: number;
+  declare price: number;
 }

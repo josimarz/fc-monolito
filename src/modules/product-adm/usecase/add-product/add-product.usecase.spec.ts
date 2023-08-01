@@ -1,3 +1,4 @@
+import { AddProductInputDto } from "./add-product.dto";
 import AddProductUseCase from "./add-product.usecase";
 
 const MockRepository = () => {
@@ -12,10 +13,11 @@ describe("Add Product usecase unit test", () => {
     const productRepository = MockRepository();
     const usecase = new AddProductUseCase(productRepository);
 
-    const input = {
+    const input: AddProductInputDto = {
       name: "Product 1",
       description: "Product 1 description",
       purchasePrice: 100,
+      salesPrice: 120,
       stock: 10,
     };
 
@@ -26,6 +28,7 @@ describe("Add Product usecase unit test", () => {
     expect(result.name).toBe(input.name);
     expect(result.description).toBe(input.description);
     expect(result.purchasePrice).toBe(input.purchasePrice);
+    expect(result.salesPrice).toBe(input.salesPrice);
     expect(result.stock).toBe(input.stock);
   });
 });
